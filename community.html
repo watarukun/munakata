@@ -94,7 +94,93 @@
   opacity: 1;
   pointer-events: all; /* 表示時にクリック有効 */
 }
+  body { margin:0; font-family:'Segoe UI', sans-serif; background:#1a1a1a; color:white; overflow-x:hidden;}
+  h1,h2,h3{margin:0;}
+  a{text-decoration:none;color:inherit;}
+  section{max-width:800px;margin:40px auto;padding:0 20px;}
+  section h2{text-align:center;font-size:1.8em;margin-bottom:20px;}
+  section p{line-height:1.6;}
+  #signinTrigger{position:fixed;top:15px;right:15px;background:rgba(255,255,255,0.1);color:#fff;padding:0.4rem 0.8rem;border-radius:8px;cursor:pointer;}
+  #editBtn{display:none;position:fixed;bottom:20px;right:20px;background:#00ffe0;color:#000;padding:0.8rem 1rem;border-radius:50%;cursor:pointer;font-weight:bold;}
+  .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:2000;}
+  .modal.show{display:flex;}
+  #loginBox,#editBox{background:#2a2a2a;padding:2rem;border-radius:12px;text-align:center;width:300px;}
+  #loginBox input,#editBox input,#editBox textarea{width:100%;padding:0.5rem;margin:0.5rem 0;border:none;border-radius:8px;background:rgba(255,255,255,0.1);color:white;}
+  #loginBox button,#editBox button{width:48%;margin:0.5%;background:#fff;color:#000;padding:0.5rem;border-radius:8px;cursor:pointer;}
+  #editBox textarea{height:120px;}
+  button.postBtn{margin-top:10px;background:#00ffe0;color:#000;border:none;border-radius:5px;padding:0.3rem 0.5rem;cursor:pointer;}
 
+
+#infoSections {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.infoCard {
+  background: rgba(20, 20, 20, 0.8);
+  border: 1px solid rgba(0, 255, 224, 0.3);
+  border-radius: 10px;
+  padding: 15px 20px;
+  position: relative;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.infoCard:hover {
+  background: rgba(0, 255, 224, 0.05);
+  transform: translateY(-3px);
+}
+
+.infoCard h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.2em;
+  color: #00ffe0;
+}
+
+.infoCard p {
+  margin: 0;
+  line-height: 1.6;
+  color: #f0f0f0;
+  word-break: break-word;
+}
+
+/* 編集・削除ボタン */
+.infoCard button.editBtn {
+  position: absolute;
+  top: 10px;
+  right: 50px;
+  background: #00ffe0;
+  color: #000;
+  border: none;
+  border-radius: 5px;
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.infoCard button.editBtn:hover {
+  background: #00c4b0;
+}
+
+.infoCard button.deleteBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #ff4d4d;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.infoCard button.deleteBtn:hover {
+  background: #e60000;
+}
 
 
 
@@ -107,144 +193,28 @@
 <!-- Hero -->
 <div class="hero">
   <div class="hero-content">
-    <h1>セゾン・ド・宗像</h1>
-    <p>自由が丘中学校で生まれた世界で最も先進的なチョコレート</p>
+    <h1>セゾン・ド・宗像　掲示板</h1>
+    <p>話し合おう　適当に</p>
   </div>
 </div>
 
 <!-- Products -->
-<section>
-  <h2>四季を感じるチョコレート</h2>
-  <p>自由ヶ丘中学校9年生が考案した、宗像の特産品を使った4種類のチョコレート。<br>地域の魅力をひと粒に込めました。</p>
-  <div class="grid">
-    <div class="card"><h3>春</h3><p>宗像産ホウレンソウのホワイトチョコ</p></div>
-    <div class="card"><h3>夏</h3><p>甘夏 × 大島の塩の爽やかな風味</p></div>
-    <div class="card"><h3>秋</h3><p>宗像産イチジクの濃厚な甘み</p></div>
-    <div class="card"><h3>冬</h3><p>きなこ × ライスパウダー × 大島の塩</p></div>
-  </div>
-</section>
-<div id="chocoModal" class="modal">
-  <div id="chocoBox" style="background:#1c1c1c; padding:2rem; border-radius:12px; width:400px; text-align:center; position:relative;">
-    <span id="closeModal" style="position:absolute; top:10px; right:15px; cursor:pointer; font-size:1.5rem;">&times;</span>
-    <h2 id="chocoTitle"></h2>
-    <p id="chocoDesc"></p>
-  </div>
-</div>
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const chocoModal = document.getElementById('chocoModal');
-  const chocoTitle = document.getElementById('chocoTitle');
-  const chocoDesc = document.getElementById('chocoDesc');
-  const closeModal = document.getElementById('closeModal');
 
-  const chocoData = {
-    "春": { title: "春", desc: "宗像産ホウレンソウのホワイトチョコ" },
-    "夏": { title: "夏", desc: "甘夏 × 大島の塩の爽やかな風味" },
-    "秋": { title: "秋", desc: "宗像産イチジクの濃厚な甘み" },
-    "冬": { title: "冬", desc: "きなこ × ライスパウダー × 大島の塩" }
-  };
 
-  document.querySelectorAll('.grid .card').forEach(card => {
-    card.addEventListener('click', () => {
-      const key = card.querySelector('h3').textContent;
-      if(chocoData[key]){
-        chocoTitle.textContent = chocoData[key].title;
-        chocoDesc.textContent = chocoData[key].desc;
-        chocoModal.classList.add('show');
-      }
-    });
-  });
 
-  closeModal.addEventListener('click', () => {
-    chocoModal.classList.remove('show');
-  });
-
-  chocoModal.addEventListener('click', e => {
-    if(e.target === chocoModal) chocoModal.classList.remove('show');
-  });
-});
-</script>
 
 
 <!-- Story -->
-<section>
-  <h2>プロジェクトストーリー</h2>
-  <p>141名の中学生がアイデアを出し合い、投票を経て誕生した「saison de MUNAKATA」。<br>洋菓子専門店「チョコレートショップ」が開発を担当し、宗像市役所でお披露目されました。</p>
-</section>
-
-
-<section>
-  <div class="sns-links">
-    <a href="https://x.com/munakata2022" target="_blank">
-      <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitter.svg" alt="Twitter" />
-    </a>
-    <a href="https://www.instagram.com/p/DCSyYCtS5Qu/" target="_blank">
-      <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" alt="Instagram" />
-    </a>
-    <a href="https://www.facebook.com/munakata.city" target="_blank">
-      <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/facebook.svg" alt="Facebook" />
-    </a>
-  </div>
-</section>
-
-<section class="boardSection">
-  <h2>掲示板</h2>
-  <a href="community.html" class="boardCard">
-    <p>掲示板にアクセス</p>
-  </a>
-</section>
-
-<style>
-.boardSection {
-  max-width: 600px;
-  margin: 50px auto;
-  text-align: center;
-}
-
-.boardSection h2 {
-  font-size: 2em;
-  color: #e6d8a2;
-  margin-bottom: 20px;
-}
-
-.boardCard {
-  display: block;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: 12px;
-  padding: 30px;
-  color: #fff;
-  font-size: 1.2em;
-  text-decoration: none;
-  transition: transform 0.3s ease, background 0.3s ease;
-}
-
-.boardCard:hover {
-  transform: translateY(-6px);
-  background: rgba(255,255,255,0.12);
-  box-shadow: 0 8px 20px rgba(0,255,224,0.4);
-}
-
-.boardCard p {
-  margin: 0;
-  font-weight: bold;
-}
-</style>
-
-
-<!-- 追加情報 -->
-
 <!-- サインインボタン -->
 <button id="signinTrigger">サインイン</button>
 
-<!-- 編集ボタン -->
+<!-- 編集ボタン（固定） -->
 <button id="editBtn">✎</button>
 
 <!-- サインインモーダル -->
 <div id="loginModal" class="modal">
   <div id="loginBox">
     <h2>サインイン</h2>
-       <p>サインイン状態は保存されます</p>
     <input type="text" id="username" placeholder="ユーザー名">
     <input type="password" id="password" placeholder="パスワード">
     <button id="loginBtn">ログイン</button>
@@ -252,34 +222,30 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 
 <!-- 編集モーダル -->
-<main id="infoSections">
-  <!-- JSで3つ分生成 -->
-</main>
-
-<!-- 編集モーダル -->
 <div id="editModal" class="modal">
   <div id="editBox">
-    <h2>内容編集</h2>
+    <h2>投稿編集</h2>
     <input type="text" id="editTitle" placeholder="タイトル">
     <textarea id="editArea"></textarea><br>
     <button id="saveBtn">保存</button>
     <button id="cancelBtn">キャンセル</button>
- 
   </div>
 </div>
+
+<!-- 掲示板投稿一覧 -->
+<main id="infoSections">
+  <!-- JSで投稿を生成 -->
+</main>
+
 <div id="signedInMessage" style="display:none; text-align:center; margin-top:20px; color:#00ffe0; font-weight:bold;">
-<p> 編集者へ　バグとか動かないとかあったら俺に伝えて</p>
-<p>ANTI cisco umbrella フィルタリング検出対策済み</p>
+  <p>管理者モードです。投稿・編集・削除が可能。</p>
 </div>
 
-<!-- サインイン時メッセージ -->
-
-<footer>
-    <p>© 2024~2025 セゾン・ド・宗像  　 Web page Created by watatawa Software</p>
+<footer style="text-align:center; padding:20px; color:#777;">
+  <p>© 2024~2025 オンライン掲示板   Web page Created by watatawa Software</p>
 </footer>
-
 <script>
-   let isSignedIn = false;
+let isSignedIn = false;
 
 const supabaseUrl = "https://zaebyzcghulsofisuqsv.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InphZWJ5emNnaHVsc29maXN1cXN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5OTc0OTIsImV4cCI6MjA3MjU3MzQ5Mn0.etTWvg6ngetIO56zYRw00AaP2Y8vvpYG7kkqpEyOt2s";
@@ -288,11 +254,15 @@ const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 const infoSections = document.getElementById("infoSections");
 const loginModal = document.getElementById("loginModal");
 const editModal = document.getElementById("editModal");
+const editBtn = document.getElementById("editBtn");
+const signinTrigger = document.getElementById("signinTrigger");
+const signedInMessage = document.getElementById("signedInMessage");
+
 let editingId = null;
 let infoData = [];
 
 // --- サインインモーダル表示 ---
-document.getElementById("signinTrigger").addEventListener("click", () => loginModal.classList.add("show"));
+signinTrigger.addEventListener("click", () => loginModal.classList.add("show"));
 loginModal.addEventListener("click", e => { if(e.target === loginModal) loginModal.classList.remove("show"); });
 
 // --- サインイン ---
@@ -300,16 +270,16 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
   const username = document.getElementById("username").value.trim();
   const password = document.getElementById("password").value.trim();
   const { data, error } = await supabaseClient.from("user").select("*").eq("username", username).eq("pass", password).single();
-const signedInMessage = document.getElementById("signedInMessage");
+
   if(data){
     loginModal.classList.remove("show");
     alert("ログイン成功！");
     isSignedIn = true;
-    localStorage.setItem("isSignedIn", "true"); // サインイン状態保持
+    localStorage.setItem("isSignedIn", "true");
     renderSections(true);
     editBtn.style.display = "block";
     signinTrigger.textContent = "サインアウト";
-      signedInMessage.style.display = "block";
+    signedInMessage.style.display = "block";
   } else {
     alert("ユーザー名またはパスワードが間違っています");
     console.error(error);
@@ -318,7 +288,7 @@ const signedInMessage = document.getElementById("signedInMessage");
 
 // --- データ読み込み & 描画 ---
 async function loadInfoSections() {
-  const { data, error } = await supabaseClient.from("info").select("*").order("id", { ascending:true });
+  const { data, error } = await supabaseClient.from("community").select("*").order("id", { ascending:true });
   if(error){ console.error(error); infoSections.innerHTML = "<p>読み込みエラー</p>"; return; }
 
   infoData = data;
@@ -327,78 +297,64 @@ async function loadInfoSections() {
 
 function renderSections(isSignedIn = false){
   infoSections.innerHTML = "";
-
+  
   infoData.forEach(section => {
-    const sec = document.createElement("section");
-    sec.innerHTML = `
+    const card = document.createElement("div");
+    card.className = "infoCard";
+    card.innerHTML = `
       <h2>${section.title}</h2>
-      <p id="infoContent-${section.id}">${section.info}</p>
+      <p>${section.content}</p>
+      <div class="meta">投稿者: ${section.created_by || "匿名"} | ${new Date(section.created_at).toLocaleString()}</div>
     `;
-   
-    infoSections.appendChild(sec);
+
     if(isSignedIn){
-  const btn = document.createElement("button");
-  btn.textContent = "✎";
-  btn.className = "editBtn";
-  btn.dataset.id = section.id;
-  btn.style.marginTop = "10px";
-  btn.addEventListener("click", () => openEditor(section.id));
-  sec.appendChild(btn);
+      const editBtn = document.createElement("button");
+      editBtn.className = "editBtn";
+      editBtn.textContent = "✎";
+      editBtn.addEventListener("click", () => openEditor(section.id));
+      card.appendChild(editBtn);
 
-  // 削除ボタン
-  const delBtn = document.createElement("button");
-  delBtn.textContent = "🗑️";
-  delBtn.style.marginLeft = "10px";
-  delBtn.style.background = "#ff4d4d";
-  delBtn.style.color = "#fff";
-  delBtn.style.border = "none";
-  delBtn.style.borderRadius = "5px";
-  delBtn.style.padding = "0.3rem 0.5rem";
-  delBtn.style.cursor = "pointer";
-  delBtn.addEventListener("click", () => deleteSection(section.id));
-  sec.appendChild(delBtn);
-}
+      const delBtn = document.createElement("button");
+      delBtn.className = "deleteBtn";
+      delBtn.textContent = "🗑️";
+      delBtn.addEventListener("click", () => deleteSection(section.id));
+      card.appendChild(delBtn);
+    }
 
+    infoSections.appendChild(card);
   });
 
-  // 新規追加ボタン
-  if(isSignedIn){
-    const addBtn = document.createElement("button");
-    addBtn.textContent = "＋ 新規追加";
-    addBtn.style.display = "block";
-    addBtn.style.margin = "30px auto";
-    addBtn.style.padding = "0.5rem 1rem";
-    addBtn.style.background = "#00ffe0";
-    addBtn.style.color = "#000";
-    addBtn.style.borderRadius = "8px";
-    addBtn.style.cursor = "pointer";
-    addBtn.addEventListener("click", () => openEditor(null));
-    infoSections.appendChild(addBtn);
-  }
+  // 新規追加ボタン → サインイン状態に関係なく表示
+  const addBtn = document.createElement("button");
+  addBtn.textContent = "＋ 新規投稿";
+  addBtn.style.display = "block";
+  addBtn.style.margin = "30px auto";
+  addBtn.style.padding = "0.5rem 1rem";
+  addBtn.style.background = "#00ffe0";
+  addBtn.style.color = "#000";
+  addBtn.style.borderRadius = "8px";
+  addBtn.style.cursor = "pointer";
+  addBtn.addEventListener("click", () => openEditor(null));
+  infoSections.appendChild(addBtn);
 }
+
+
+
+
 async function deleteSection(id){
   if(!confirm("本当に削除しますか？")) return;
-
-  const { error } = await supabaseClient.from("info").delete().eq("id", id);
-  if(error){
-    console.error("削除失敗:", error);
-    alert("削除に失敗しました");
-    return;
-  }
-
-  alert("削除しました");
-  loadInfoSections(); // 再描画
+  const { error } = await supabaseClient.from("community").delete().eq("id", id);
+  if(error){ console.error(error); alert("削除失敗"); return; }
+  loadInfoSections();
 }
-
-
 // --- 編集モーダル ---
 function openEditor(id){
   editingId = id;
   if(id){
-    const section = infoData.find(s => s.id == id);
-    document.getElementById("editTitle").value = section.title;
-    document.getElementById("editArea").value = section.info;
-  } else { // 新規追加
+    const post = infoData.find(p => p.id == id);
+    document.getElementById("editTitle").value = post.title;
+    document.getElementById("editArea").value = post.content;
+  } else {
     document.getElementById("editTitle").value = "";
     document.getElementById("editArea").value = "";
   }
@@ -407,8 +363,8 @@ function openEditor(id){
 
 editBtn.addEventListener("click", () => {
   if(infoData.length === 0) return;
-  const lastSection = infoData[infoData.length-1];
-  openEditor(lastSection.id);
+  const lastPost = infoData[infoData.length-1];
+  openEditor(lastPost.id);
 });
 
 // --- 保存 ---
@@ -417,28 +373,26 @@ document.getElementById("saveBtn").addEventListener("click", async () => {
   const newContent = document.getElementById("editArea").value.trim();
   if(!newTitle || !newContent) return alert("タイトルと内容を入力してください");
 
-  if(editingId){ // 更新
-    const { error } = await supabaseClient.from("info").update({ title:newTitle, info:newContent }).eq("id", editingId);
-    if(error){ console.error(error); return alert("保存に失敗しました"); }
-  } else { // 新規追加
-    const { error } = await supabaseClient.from("info").insert({ title:newTitle, info:newContent });
-    if(error){ console.error(error); return alert("追加に失敗しました"); }
+  if(editingId){
+    const { error } = await supabaseClient.from("community").update({ title:newTitle, content:newContent }).eq("id", editingId);
+    if(error){ console.error(error); alert("保存失敗"); return; }
+  } else {
+    const { error } = await supabaseClient.from("community").insert({ title:newTitle, content:newContent });
+    if(error){ console.error(error); alert("追加失敗"); return; }
   }
 
   editModal.classList.remove("show");
   editingId = null;
-  alert(editingId ? "保存しました" : "追加しました");
-  loadInfoSections(); // リロードせずに更新
+  loadInfoSections();
 });
 
 // --- キャンセル・モーダル閉じる ---
 document.getElementById("cancelBtn").addEventListener("click", ()=>{ editModal.classList.remove("show"); editingId = null; });
-editModal.addEventListener("click", e=>{ if(e.target === editModal) editModal.classList.remove("show"); });
+editModal.addEventListener("click", e => { if(e.target === editModal) editModal.classList.remove("show"); });
 
 // --- サインイン状態復元 ---
 window.addEventListener("DOMContentLoaded", () => {
-  const signedIn = localStorage.getItem("isSignedIn");
-  if(signedIn === "true"){
+  if(localStorage.getItem("isSignedIn") === "true"){
     isSignedIn = true;
     editBtn.style.display = "block";
     signinTrigger.textContent = "サインアウト";
@@ -455,15 +409,11 @@ signinTrigger.addEventListener("click", () => {
     signinTrigger.textContent = "サインイン";
     editBtn.style.display = "none";
     renderSections(false);
-    alert("サインアウトしました");
     signedInMessage.style.display = "none";
   } else {
     loginModal.classList.add("show");
   }
 });
-
-
-
 </script>
 </body>
 </html>
