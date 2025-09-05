@@ -5,7 +5,7 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>セゾン・ド宗像 - オンライン編集対応</title>
+<title>セゾン・ド宗像 - お知らせ</title>
 
 <!-- Supabase JS -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
@@ -195,8 +195,8 @@
 <!-- Hero -->
 <div class="hero">
   <div class="hero-content">
-    <h1>セゾン・ド・宗像　掲示板</h1>
-    <p>話し合おう　適当に</p>
+    <h1>セゾン・ド・宗像　お知らせ・最新情報</h1>
+    <p>いち早く情報を手に入れましょう</p>
   </div>
 </div>
 
@@ -226,7 +226,7 @@
 <!-- 編集モーダル -->
 <div id="editModal" class="modal">
   <div id="editBox">
-    <h2>投稿編集</h2>
+    <h2>お知らせ　投稿/編集</h2>
     <input type="text" id="editTitle" placeholder="タイトル">
     <textarea id="editArea"></textarea><br>
     <button id="saveBtn">保存</button>
@@ -244,7 +244,7 @@
 </div>
 
 <footer style="text-align:center; padding:20px; color:#777;">
-  <p>© 2024~2025 オンライン掲示板   Web page Created by watatawa Software</p>
+  <p>© 2024~2025 セゾン・ド・宗像   Web page Created by watatawa Software</p>
 </footer>
 <script>
 let isSignedIn = false;
@@ -306,19 +306,19 @@ function renderSections(isSignedIn = false){
     card.innerHTML = `
       <h2>${section.title}</h2>
       <p>${section.content}</p>
-      <div class="meta">投稿者: ${section.created_by || "匿名"} | ${new Date(section.created_at).toLocaleString()}</div>
+      <div class="meta">${new Date(section.created_at).toLocaleString()}</div>
     `;
 
     if(isSignedIn){
       const editBtn = document.createElement("button");
       editBtn.className = "editBtn";
-      editBtn.textContent = "✎";
+      editBtn.textContent = "✎編集";
       editBtn.addEventListener("click", () => openEditor(section.id));
       card.appendChild(editBtn);
 
       const delBtn = document.createElement("button");
       delBtn.className = "deleteBtn";
-      delBtn.textContent = "🗑️";
+      delBtn.textContent = "削除";
       delBtn.addEventListener("click", () => deleteSection(section.id));
       card.appendChild(delBtn);
     }
@@ -326,7 +326,7 @@ function renderSections(isSignedIn = false){
     infoSections.appendChild(card);
   });
 
-  // 新規追加ボタン → サインイン状態に関係なく表示
+  if(isSignedIn){
   const addBtn = document.createElement("button");
   addBtn.textContent = "＋ 新規投稿";
   addBtn.style.display = "block";
@@ -338,7 +338,7 @@ function renderSections(isSignedIn = false){
   addBtn.style.cursor = "pointer";
   addBtn.addEventListener("click", () => openEditor(null));
   infoSections.appendChild(addBtn);
-}
+}}
 
 
 

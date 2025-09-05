@@ -3,14 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>セゾン・ド宗像 - オンライン編集対応</title>
+<title>セゾン・ド・宗像</title>
 <link rel="icon" type="image/jpeg" href="icon.jpg">
 
-
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- Supabase JS -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/dist/umd/supabase.min.js"></script>
 
 <style>
+    
+    .chart-container {
+  margin-bottom: 30px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f9f9f9;
+  text-align: center;
+}
+
+.chart-container canvas {
+  max-width: 300px;
+  margin: auto;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
   /* --- 基本デザイン --- */
   body { margin:0; font-family:'Segoe UI', sans-serif; background:linear-gradient(to bottom right, #0d0d0d, #1c1c1c); color:white; overflow-x:hidden;}
   h1,h2,h3{margin:0;}
@@ -96,9 +115,80 @@
   opacity: 1;
   pointer-events: all; /* 表示時にクリック有効 */
 }
+#openAdminBtn{position:fixed;top:6px;right:160px;background:rgba(255,255,255,0.1);color:#f7f7f7;padding:0.4rem 0.8rem;border-radius:8px;font-size:0.9rem;cursor:pointer;transition:all 0.3s;border:1px solid rgba(255,255,255,0.2);z-index:1000;}
+  #openAdminBtn:hover{background:rgba(0,255,224,0.2);color:#fff;}
+  
 
 
+/* ===== 円グラフ入力欄 ===== */
+.pie-data-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+}
 
+.form-group {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"] {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 120px;
+}
+
+/* ===== ボタン ===== */
+#pieChartSection button {
+  margin-right: 10px;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-add {
+  background-color: #00c3ff;
+  color: white;
+}
+
+.btn-add:hover {
+  background-color: #009ace;
+}
+
+.btn-generate {
+  background-color: #4caf50;
+  color: white;
+}
+
+.btn-generate:hover {
+  background-color: #3a8f40;
+}
+
+/* ===== 円グラフ表示領域 ===== */
+.chart-container {
+  margin-bottom: 30px;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f9f9f9;
+  text-align: center;
+}
+
+.chart-container canvas {
+  max-width: 320px;
+  margin: auto;
+}
 
 
 
@@ -110,7 +200,7 @@
 <div class="hero">
   <div class="hero-content">
     <h1>セゾン・ド・宗像</h1>
-    <p>自由が丘中学校で生まれた世界で最も先進的なチョコレート</p>
+    <p>自由ヶ丘中学校で生まれた世界で最も先進的なチョコレート</p>
   </div>
 </div>
 
@@ -190,9 +280,9 @@ document.addEventListener("DOMContentLoaded", () => {
 </section>
 
 <section class="boardSection">
-  <h2>掲示板</h2>
+  <h2>お知らせ・最新情報</h2>
   <a href="community.html" class="boardCard">
-    <p>掲示板にアクセス</p>
+    <p>新着お知らせ</p>
   </a>
 </section>
 
@@ -242,16 +332,36 @@ document.addEventListener("DOMContentLoaded", () => {
 <!-- 編集ボタン -->
 <button id="editBtn">✎</button>
 
+
 <!-- サインインモーダル -->
 <div id="loginModal" class="modal">
   <div id="loginBox">
-    <h2>サインイン</h2>
-       <p>サインイン状態は保存されます</p>
+    <h2>編集者用サインイン</h2>
+       <p>サインイン状態は維持されます</p>
     <input type="text" id="username" placeholder="ユーザー名">
     <input type="password" id="password" placeholder="パスワード">
     <button id="loginBtn">ログイン</button>
   </div>
 </div>
+<!-- 管理者メモモーダル -->
+<div id="adminNoteModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+  background:#fff; padding:20px; border-radius:8px; box-shadow:0 0 15px rgba(0,0,0,0.3); z-index:9999; width:80%; max-width:600px; flex-direction:column;">
+  <h3 style="color: #1c1c1c;">管理者メモ</h3>
+   <h4 style="color: #1c1c1c;">このノートの内容は他の管理者と共有されます</h4>
+  <textarea id="adminNoteTextarea" style="width:100%; height:400px; margin-top:10px; padding:5px; font-family:Consolas,monospace; font-size:14px;"></textarea>
+  <div style="margin-top:10px; text-align:right;">
+    <button onclick="closeAdminNote()" style="padding:5px 10px; background:#ffc400; border:none; border-radius:5px; cursor:pointer;">閉じる</button>
+    <button id="saveNoteBtn" style="padding:5px 10px; background:#00eeff; border:none; border-radius:5px; cursor:pointer;">保存</button>
+  </div>
+</div>
+
+<!-- 管理者メモを開くボタン（最初は非表示） -->
+<button id="openAdminBtn" style="display:none; margin:10px 0; padding:5px 10px;">管理者メモを開く</button>
+
+
+<!-- 管理者メモを開くボタン -->
+
+
 
 <!-- 編集モーダル -->
 <main id="infoSections">
@@ -269,9 +379,48 @@ document.addEventListener("DOMContentLoaded", () => {
  
   </div>
 </div>
+<!-- ======= 円グラフ付き情報追加・編集モーダル ======= -->
+<!-- 円グラフ付き情報追加・編集モーダル -->
+<div id="editorModal" style="
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background:#262626;   /* ← ここを変更 */
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 0 10px rgb(247, 247, 247);
+    z-index:9999;
+    max-width:400px;
+    width:90%;
+">
+  <h3>情報を編集</h3>
+  <input id="editorTitle" type="text" placeholder="タイトル" style="width:100%; margin-bottom:10px; padding:5px;" />
+  <textarea id="editorInfo" placeholder="説明" style="width:100%; height:80px; margin-bottom:10px; padding:5px;"></textarea>
+
+  <h4>円グラフデータ</h4><p>追加しない場合は空白でok</p>
+  <div id="chartInputs"></div>
+  <button type="button" onclick="addChartInputRow(document.getElementById('chartInputs'))" style="margin-top:5px;">＋ グラフデータ追加</button>
+
+  <div style="margin-top:15px; text-align:right;">
+    <button onclick="saveSection()" style="padding:5px 10px; background:#00ffe0; border:none; border-radius:5px; cursor:pointer;">保存</button>
+    <button onclick="closeEditor()" style="padding:5px 10px; margin-left:10px;">キャンセル</button>
+  </div>
+</div>
+
+
+
+<!-- グラフ表示領域 -->
+<div id="output" style="margin-top:30px;"></div>
 <div id="signedInMessage" style="display:none; text-align:center; margin-top:20px; color:#00ffe0; font-weight:bold;">
-<p> 編集者へ　バグとか動かないとかあったら俺に伝えて</p>
-<p>ANTI cisco umbrella フィルタリング検出対策済み</p>
+<p> 編集者へ、バグとか動かないとかあったら伝えて</p>
+<p>ふざけた内容の追加は許しません。変更内容は即座に反映されます</p>
+</div>
+
+<div id="toukei" style="text-align: center; display: none;">
+  <h2>閲覧者数統計</h2>
+<p id="infoContent-1"></p>
 </div>
 
 <!-- サインイン時メッセージ -->
@@ -310,7 +459,9 @@ const signedInMessage = document.getElementById("signedInMessage");
     localStorage.setItem("isSignedIn", "true"); // サインイン状態保持
     renderSections(true);
     editBtn.style.display = "block";
+     toukei.style.display = "block";
     signinTrigger.textContent = "サインアウト";
+        openAdminBtn.style.display ='block';
       signedInMessage.style.display = "block";
   } else {
     alert("ユーザー名またはパスワードが間違っています");
@@ -327,7 +478,7 @@ async function loadInfoSections() {
   renderSections(isSignedIn);
 }
 
-function renderSections(isSignedIn = false){
+function renderSections(isSignedIn = false) {
   infoSections.innerHTML = "";
 
   infoData.forEach(section => {
@@ -336,35 +487,83 @@ function renderSections(isSignedIn = false){
       <h2>${section.title}</h2>
       <p id="infoContent-${section.id}">${section.info}</p>
     `;
-   
     infoSections.appendChild(sec);
-    if(isSignedIn){
-  const btn = document.createElement("button");
-  btn.textContent = "✎";
-  btn.className = "editBtn";
-  btn.dataset.id = section.id;
-  btn.style.marginTop = "10px";
-  btn.addEventListener("click", () => openEditor(section.id));
-  sec.appendChild(btn);
 
-  // 削除ボタン
-  const delBtn = document.createElement("button");
-  delBtn.textContent = "🗑️";
-  delBtn.style.marginLeft = "10px";
-  delBtn.style.background = "#ff4d4d";
-  delBtn.style.color = "#fff";
-  delBtn.style.border = "none";
-  delBtn.style.borderRadius = "5px";
-  delBtn.style.padding = "0.3rem 0.5rem";
-  delBtn.style.cursor = "pointer";
-  delBtn.addEventListener("click", () => deleteSection(section.id));
-  sec.appendChild(delBtn);
+    // --- 編集ボタンと削除ボタン ---
+    if (isSignedIn) {
+      const btn = document.createElement("button");
+      btn.textContent = "✎編集";
+      btn.className = "editBtn";
+      btn.dataset.id = section.id;
+      btn.style.marginTop = "10px";
+      btn.addEventListener("click", () => openEditor(section.id));
+      sec.appendChild(btn);
+
+      const delBtn = document.createElement("button");
+      delBtn.textContent = "削除";
+      delBtn.style.marginLeft = "10px";
+      delBtn.style.background = "#ff4d4d";
+      delBtn.style.color = "#fff";
+      delBtn.style.border = "none";
+      delBtn.style.borderRadius = "5px";
+      delBtn.style.padding = "0.3rem 0.5rem";
+      delBtn.style.cursor = "pointer";
+      delBtn.addEventListener("click", () => deleteSection(section.id));
+      sec.appendChild(delBtn);
+    }
+
+    // 円グラフ描画（必ず forEach 内で）
+    // 円グラフ描画（forEach 内）
+// 円グラフ描画（forEach 内）
+if (section.chart_data && Array.isArray(section.chart_data) && section.chart_data.length > 0) {
+  const chartContainer = document.createElement("div");
+  chartContainer.className = "chart-container";
+  
+  // 中央配置用スタイル
+  chartContainer.style.width = "300px";  
+  chartContainer.style.height = "300px"; 
+  chartContainer.style.display = "flex";
+  chartContainer.style.justifyContent = "center"; // 横方向中央
+  chartContainer.style.alignItems = "center";     // 縦方向中央
+  chartContainer.style.margin = "0 auto";        // ブラウザ全体中央も補助
+
+  const canvas = document.createElement("canvas");
+  chartContainer.appendChild(canvas);
+  sec.appendChild(chartContainer);
+
+  const labels = section.chart_data.map(item => item.label);
+  const values = section.chart_data.map(item => item.value);
+
+  new Chart(canvas, {
+    type: 'pie',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.6)',
+          'rgba(54, 162, 235, 0.6)',
+          'rgba(255, 206, 86, 0.6)',
+          'rgba(75, 192, 192, 0.6)',
+          'rgba(153, 102, 255, 0.6)',
+          'rgba(255, 159, 64, 0.6)'
+        ]
+      }]
+    },
+    options: {
+      responsive: false,
+      maintainAspectRatio: true,
+      plugins: { legend: { position: 'bottom' } }
+    }
+  });
 }
+
 
   });
 
-  // 新規追加ボタン
-  if(isSignedIn){
+  // 新規追加ボタン（forEach の外でOK）
+  if (isSignedIn) {
+    
     const addBtn = document.createElement("button");
     addBtn.textContent = "＋ 新規追加";
     addBtn.style.display = "block";
@@ -378,6 +577,7 @@ function renderSections(isSignedIn = false){
     infoSections.appendChild(addBtn);
   }
 }
+
 async function deleteSection(id){
   if(!confirm("本当に削除しますか？")) return;
 
@@ -394,18 +594,41 @@ async function deleteSection(id){
 
 
 // --- 編集モーダル ---
-function openEditor(id){
-  editingId = id;
-  if(id){
-    const section = infoData.find(s => s.id == id);
-    document.getElementById("editTitle").value = section.title;
-    document.getElementById("editArea").value = section.info;
-  } else { // 新規追加
-    document.getElementById("editTitle").value = "";
-    document.getElementById("editArea").value = "";
+function openEditor(sectionId = null) {
+  const modal = document.getElementById("editorModal");
+  const titleInput = document.getElementById("editorTitle");
+  const infoInput = document.getElementById("editorInfo");
+  const chartArea = document.getElementById("chartInputs");
+
+  editingId = sectionId;
+
+  titleInput.value = "";
+  infoInput.value = "";
+  chartArea.innerHTML = "";
+
+  if (sectionId) {
+    const section = infoData.find(s => s.id === sectionId);
+    if (section) {
+      titleInput.value = section.title;
+      infoInput.value = section.info;
+      if (section.chart_data && Array.isArray(section.chart_data)) {
+        section.chart_data.forEach(item => addChartInputRow(chartArea, item.label, item.value));
+      }
+    }
+  } else {
+    addChartInputRow(chartArea);
   }
-  editModal.classList.add("show");
+
+  modal.style.display = "block";
 }
+
+function closeEditorModal() {
+  document.getElementById("editorModal").style.display = "none";
+  editingId = null;
+}
+
+
+
 
 editBtn.addEventListener("click", () => {
   if(infoData.length === 0) return;
@@ -445,6 +668,7 @@ window.addEventListener("DOMContentLoaded", () => {
     editBtn.style.display = "block";
     signinTrigger.textContent = "サインアウト";
     signedInMessage.style.display = "block";
+
   }
   loadInfoSections();
 });
@@ -455,7 +679,9 @@ signinTrigger.addEventListener("click", () => {
     isSignedIn = false;
     localStorage.removeItem("isSignedIn");
     signinTrigger.textContent = "サインイン";
+    openAdminBtn.style.display ='none';
     editBtn.style.display = "none";
+        toukei.style.display = "none";
     renderSections(false);
     alert("サインアウトしました");
     signedInMessage.style.display = "none";
@@ -464,6 +690,218 @@ signinTrigger.addEventListener("click", () => {
   }
 });
 
+function addChartInputRow(container, label = "", value = "") {
+  const row = document.createElement("div");
+  row.className = "chart-input-row";
+  row.style.display = "flex";
+  row.style.gap = "10px";
+  row.style.marginBottom = "5px";
+
+  row.innerHTML = `
+    <input type="text" placeholder="ラベル" value="${label}" class="chart-label-input" style="flex:1; padding:5px;" />
+    <input type="number" placeholder="値" value="${value}" class="chart-value-input" style="width:80px; padding:5px;" />
+    <button type="button" class="remove-row-btn" style="background:#ff4d4d; color:white; border:none; padding:5px; border-radius:5px; cursor:pointer;">✖</button>
+  `;
+
+  row.querySelector(".remove-row-btn").addEventListener("click", () => {
+    container.removeChild(row);
+  });
+
+  container.appendChild(row);
+}
+
+
+// --- 保存 ---
+// editorModal の保存ボタンを押した時の処理
+async function saveSection() {
+  const titleInput = document.getElementById("editorTitle");
+  const infoInput = document.getElementById("editorInfo");
+  const chartArea = document.getElementById("chartInputs");
+
+  const newTitle = titleInput.value.trim();
+  const newInfo = infoInput.value.trim();
+
+  if (!newTitle || !newInfo) return alert("タイトルと内容を入力してください");
+
+  // チャートデータ取得
+  const chartData = Array.from(chartArea.querySelectorAll(".chart-input-row")).map(row => {
+    const label = row.querySelector(".chart-label-input").value.trim();
+    const value = parseFloat(row.querySelector(".chart-value-input").value);
+    return { label, value };
+  }).filter(item => item.label && !isNaN(item.value));
+
+  if (editingId) {
+    // 更新
+    const { error } = await supabaseClient
+      .from("info")
+      .update({ title: newTitle, info: newInfo, chart_data: chartData })
+      .eq("id", editingId);
+    if (error) { console.error(error); return alert("保存に失敗しました"); }
+    alert("保存しました");
+  } else {
+    // 新規追加
+    const { error } = await supabaseClient
+      .from("info")
+      .insert({ title: newTitle, info: newInfo, chart_data: chartData });
+    if (error) { console.error(error); return alert("追加に失敗しました"); }
+    alert("追加しました");
+  }
+
+  closeEditorModal();
+  editingId = null;
+  loadInfoSections(); // 再描画
+}
+
+function closeEditor() {
+  document.getElementById("editorModal").style.display = "none";
+  editingId = null;
+}
+
+
+
+
+
+
+
+const adminNoteModal = document.getElementById('adminNoteModal');
+const adminNoteTextarea = document.getElementById('adminNoteTextarea');
+const saveNoteBtn = document.getElementById('saveNoteBtn');
+const openAdminBtn = document.getElementById('openAdminBtn');
+
+// ボタン表示をサインイン状態で切り替え
+function updateAdminButton(isSignedIn) {
+  openAdminBtn.style.display = isSignedIn ? "block" : "none";
+}
+
+// モーダルを開く
+async function openAdminNote() {
+  adminNoteModal.style.display = 'flex';
+
+  // Supabaseから最新メモを取得
+  const { data, error } = await supabaseClient
+    .from('notes')
+    .select('*')
+    .order('updated_at', { ascending:false })
+    .limit(1)
+    .single();
+
+  if(data) {
+    adminNoteTextarea.value = data.content;
+  } else {
+    adminNoteTextarea.value = '';
+  }
+}
+
+// モーダルを閉じる
+function closeAdminNote() {
+  adminNoteModal.style.display = 'none';
+}
+
+// 保存ボタン
+saveNoteBtn.addEventListener('click', async () => {
+  const content = adminNoteTextarea.value;
+
+  const { error } = await supabaseClient
+    .from('notes')
+    .upsert({ id: 1, content: content, updated_at: new Date() });
+
+  if(error) {
+    console.error(error);
+    alert('保存失敗');
+  } else {
+    alert('保存しました');
+  }
+});
+
+// 管理者メモを開くボタン
+openAdminBtn.addEventListener('click', openAdminNote);
+
+// --- ページロード時にサインイン状態をチェック ---
+window.addEventListener("DOMContentLoaded", () => {
+  const signedIn = localStorage.getItem("isSignedIn") === "true";
+  updateAdminButton(signedIn);
+});
+
+// --- サインイン／サインアウト時にも表示制御を追加 ---
+// サインイン後
+function onSignIn() {
+  isSignedIn = true;
+  localStorage.setItem("isSignedIn", "true");
+  updateAdminButton(isSignedIn);
+}
+
+// サインアウト後
+function onSignOut() {
+  isSignedIn = false;
+  localStorage.removeItem("isSignedIn");
+  updateAdminButton(isSignedIn);
+  adminNoteModal.style.display = 'none'; // モーダルが開いていた場合は閉じる
+}
+
+
+
+
+
+
+
+
+const infoId = 1;
+
+// --- 表示 ---
+function renderVisitorCount(count) {
+  const secElem = document.getElementById(`infoContent-${infoId}`);
+  if (!secElem) return;
+  secElem.textContent = `閲覧者数: ${count}`;
+}
+
+// --- カウント ---
+async function countVisitor() {
+  const storageKey = `visited-${infoId}`;
+  if (localStorage.getItem(storageKey)) {
+    console.log('既にカウント済み');
+    return;
+  }
+
+  // 現在の visitors を取得
+  const { data, error } = await supabaseClient
+    .from('info')
+    .select('visiters')
+    .eq('id', infoId)
+    .single();
+
+  if (error) { console.error(error); return; }
+
+  const newCount = (data.visiters || 0) + 1;
+
+  // 更新
+  const { error: updateErr } = await supabaseClient
+    .from('info')
+    .update({ visiters: newCount })
+    .eq('id', infoId);
+
+  if (updateErr) { console.error(updateErr); return; }
+
+  localStorage.setItem(storageKey, 'true'); // ここで1回フラグ
+  renderVisitorCount(newCount);
+}
+
+// --- 初期表示 ---
+window.addEventListener('DOMContentLoaded', async () => {
+  const { data, error } = await supabaseClient
+    .from('info')
+    .select('visiters')
+    .eq('id', infoId)
+    .single();
+
+  if (error) { console.error(error); renderVisitorCount(0); }
+  else renderVisitorCount(data.visiters || 0);
+if (isSignedIn){
+  isSignedIn=true
+      toukei.style.display = "block";
+}
+  // カウント処理
+  countVisitor();
+});
 
 
 </script>
