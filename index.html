@@ -35,12 +35,69 @@
   h1,h2,h3{margin:0;}
   a{text-decoration:none;color:inherit;}
   /* Hero Section */
-  .hero{position:relative;height:100vh;background:url('https://source.unsplash.com/1600x900/?chocolate,artisan') center/cover no-repeat;display:flex;align-items:center;justify-content:center;text-align:center;}
-  .hero::after{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);}
-  .hero-content{position:relative;padding:40px;background:rgba(255,255,255,0.08);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.2);border-radius:16px;animation:fadeIn 1.5s ease;}
-  .hero h1{font-size:2.8em;color:#f9f9f9;}
-  .hero p{font-size:1.2em;margin-top:10px;color:#e6d8a2;}
-  /* Sections */
+  .hero {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* スライドショー */
+.hero .slides-wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0; left: 0;
+  transition: transform 0.5s ease;
+}
+
+.hero .slides-wrapper img {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* オーバーレイ */
+.hero-overlay {
+  content: '';
+  position: absolute;
+  top:0; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,0.6);
+}
+
+/* コンテンツ */
+.hero-content {
+  position: relative;
+  padding: 40px;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 16px;
+  animation: fadeIn 1.5s ease;
+}
+
+.hero h1 {
+  font-size: 2.8em;
+  color: #f9f9f9;
+}
+
+.hero p {
+  font-size: 1.2em;
+  margin-top: 10px;
+  color: #e6d8a2;
+}
+
+/* フェードインアニメーション */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+ /* Sections */
   section{max-width:1000px;margin:80px auto;padding:0 20px;opacity:0;transform:translateY(30px);animation:slideUp 1.2s ease forwards;}
   section h2{text-align:center;font-size:2em;color:#e6d8a2;margin-bottom:20px;}
   section p{line-height:1.8;text-align:center;}
@@ -190,6 +247,21 @@
   margin: auto;
 }
 
+#slideshow .slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+#slideshow .slide.active {
+  opacity: 1;
+  z-index: 1;
+}
+
 
 
 </style>
@@ -198,11 +270,21 @@
 <body>
 <!-- Hero -->
 <div class="hero">
+  <div class="slides-wrapper">
+
+    <img src="img2.png" alt="">
+    <img src="img3.png" alt="">
+    <img src="img4.png" alt="">
+    <img src="img5.png" alt="">
+
+  </div>
+  <div class="hero-overlay"></div>
   <div class="hero-content">
     <h1>セゾン・ド・宗像</h1>
     <p>自由ヶ丘中学校で生まれた世界で最も先進的なチョコレート</p>
   </div>
 </div>
+
 
 <!-- Products -->
 <section>
@@ -345,18 +427,18 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 <!-- 管理者メモモーダル -->
 <div id="adminNoteModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-  background:#fff; padding:20px; border-radius:8px; box-shadow:0 0 15px rgba(0,0,0,0.3); z-index:9999; width:80%; max-width:600px; flex-direction:column;">
-  <h3 style="color: #1c1c1c;">管理者メモ</h3>
-   <h4 style="color: #1c1c1c;">このノートの内容は他の管理者と共有されます</h4>
-  <textarea id="adminNoteTextarea" style="width:100%; height:400px; margin-top:10px; padding:5px; font-family:Consolas,monospace; font-size:14px;"></textarea>
+  background:#ffffff; padding:10px; border-radius:8px; box-shadow:0 0 15px rgba(0,0,0,0.3); z-index:9999; width:80%; max-width:600px; flex-direction:column;">
+  <h3 style="color: #292929; text-align: center;">メモ</h3>
+   <h4 style="color: #1c1c1c; text-align: center;">このメモの内容は他の編集者と共有されます</h4>
+  <textarea id="adminNoteTextarea" style="width:auto; color: #3f6d29; height:400px; margin-top:10px; padding:5px; font-family:Consolas,monospace; font-size:14px;"></textarea>
   <div style="margin-top:10px; text-align:right;">
-    <button onclick="closeAdminNote()" style="padding:5px 10px; background:#ffc400; border:none; border-radius:5px; cursor:pointer;">閉じる</button>
-    <button id="saveNoteBtn" style="padding:5px 10px; background:#00eeff; border:none; border-radius:5px; cursor:pointer;">保存</button>
+    <button onclick="closeAdminNote()" style="padding:5px 10px; background:#ffffff; border:none; border-radius:5px; cursor:pointer;">閉じる</button>
+    <button id="saveNoteBtn" style="padding:5px 10px; background:#ffffff; border:none; border-radius:5px; cursor:pointer;">保存</button>
   </div>
 </div>
 
 <!-- 管理者メモを開くボタン（最初は非表示） -->
-<button id="openAdminBtn" style="display:none; margin:10px 0; padding:5px 10px;">管理者メモを開く</button>
+<button id="openAdminBtn" style="display:none; margin:10px 0; padding:5px 10px;">メモを開く</button>
 
 
 <!-- 管理者メモを開くボタン -->
@@ -395,7 +477,7 @@ document.addEventListener("DOMContentLoaded", () => {
     max-width:400px;
     width:90%;
 ">
-  <h3>情報を編集</h3>
+  <h3>情報を編集</h3><p>URLは自動的にリンク化されます</p>
   <input id="editorTitle" type="text" placeholder="タイトル" style="width:100%; margin-bottom:10px; padding:5px;" />
   <textarea id="editorInfo" placeholder="説明" style="width:100%; height:80px; margin-bottom:10px; padding:5px;"></textarea>
 
@@ -419,8 +501,26 @@ document.addEventListener("DOMContentLoaded", () => {
 </div>
 
 <div id="toukei" style="text-align: center; display: none;">
-  <h2>閲覧者数統計</h2>
-<p id="infoContent-1"></p>
+<section>
+  <h2 style="color: #929292;">閲覧者数統計</h2>
+  <p id="visitorCount-1"></p> <!-- 閲覧者数専用ID -->
+</section>
+<section>
+   <h2 style="color: rgb(255, 255, 255);">作業用BGM</h2>
+<audio id="myAudio" src="yeeeeeeee.mp3" preload="auto"></audio>
+<button onclick="playAudio()" style="background-color: #ffffff; border-radius: 5px;">再生</button>
+<button onclick="pauseAudio()" style="background-color: rgb(110, 110, 110); border-radius: 5px;">停止</button>
+</section>
+<section>
+  <h2>画像の追加について</h2>
+  <p>技術的に不可能でした　諦めてください</p>
+<p>どうしても追加したい場合はHTMLに直接埋め込みます</p>
+</section>
+<script>
+  const audio = document.getElementById('myAudio');
+  function playAudio() { audio.play(); }
+  function pauseAudio() { audio.pause(); }
+</script>
 </div>
 
 <!-- サインイン時メッセージ -->
@@ -471,21 +571,41 @@ const signedInMessage = document.getElementById("signedInMessage");
 
 // --- データ読み込み & 描画 ---
 async function loadInfoSections() {
-  const { data, error } = await supabaseClient.from("info").select("*").order("id", { ascending:true });
-  if(error){ console.error(error); infoSections.innerHTML = "<p>読み込みエラー</p>"; return; }
+  const { data, error } = await supabaseClient
+    .from("info")
+    .select("*")
+    .order("id", { ascending: true });
+
+  if (error) {
+    console.error(error);
+    infoSections.innerHTML = "<p>読み込みエラー</p>";
+    return;
+  }
 
   infoData = data;
   renderSections(isSignedIn);
 }
+
+// --- URL自動リンク化 ---
+function renderInfoText(text) {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  // aタグ内の style で色を指定
+  return text.replace(urlRegex, '<a href="$1" target="_blank" style="color: white; font-weight: bold ">$1</a>');
+}
+
 
 function renderSections(isSignedIn = false) {
   infoSections.innerHTML = "";
 
   infoData.forEach(section => {
     const sec = document.createElement("section");
+
+    // info部分を自動リンク化して埋め込み
+    const linkedInfo = renderInfoText(section.info || "");
+
     sec.innerHTML = `
       <h2>${section.title}</h2>
-      <p id="infoContent-${section.id}">${section.info}</p>
+      <p id="infoContent-${section.id}" style="color">${linkedInfo}</p>
     `;
     infoSections.appendChild(sec);
 
@@ -512,58 +632,53 @@ function renderSections(isSignedIn = false) {
       sec.appendChild(delBtn);
     }
 
-    // 円グラフ描画（必ず forEach 内で）
-    // 円グラフ描画（forEach 内）
-// 円グラフ描画（forEach 内）
-if (section.chart_data && Array.isArray(section.chart_data) && section.chart_data.length > 0) {
-  const chartContainer = document.createElement("div");
-  chartContainer.className = "chart-container";
-  
-  // 中央配置用スタイル
-  chartContainer.style.width = "300px";  
-  chartContainer.style.height = "300px"; 
-  chartContainer.style.display = "flex";
-  chartContainer.style.justifyContent = "center"; // 横方向中央
-  chartContainer.style.alignItems = "center";     // 縦方向中央
-  chartContainer.style.margin = "0 auto";        // ブラウザ全体中央も補助
+    // --- 円グラフ描画 ---
+    if (section.chart_data && Array.isArray(section.chart_data) && section.chart_data.length > 0) {
+      const chartContainer = document.createElement("div");
+      chartContainer.className = "chart-container";
 
-  const canvas = document.createElement("canvas");
-  chartContainer.appendChild(canvas);
-  sec.appendChild(chartContainer);
+      // 中央配置用スタイル
+      chartContainer.style.width = "300px";
+      chartContainer.style.height = "300px";
+      chartContainer.style.display = "flex";
+      chartContainer.style.justifyContent = "center";
+      chartContainer.style.alignItems = "center";
+      chartContainer.style.margin = "0 auto";
 
-  const labels = section.chart_data.map(item => item.label);
-  const values = section.chart_data.map(item => item.value);
+      const canvas = document.createElement("canvas");
+      chartContainer.appendChild(canvas);
+      sec.appendChild(chartContainer);
 
-  new Chart(canvas, {
-    type: 'pie',
-    data: {
-      labels: labels,
-      datasets: [{
-        data: values,
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.6)',
-          'rgba(54, 162, 235, 0.6)',
-          'rgba(255, 206, 86, 0.6)',
-          'rgba(75, 192, 192, 0.6)',
-          'rgba(153, 102, 255, 0.6)',
-          'rgba(255, 159, 64, 0.6)'
-        ]
-      }]
-    },
-    options: {
-      responsive: false,
-      maintainAspectRatio: true,
-      plugins: { legend: { position: 'bottom' } }
+      const labels = section.chart_data.map(item => item.label);
+      const values = section.chart_data.map(item => item.value);
+
+      new Chart(canvas, {
+        type: 'pie',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: values,
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.6)',
+              'rgba(54, 162, 235, 0.6)',
+              'rgba(255, 206, 86, 0.6)',
+              'rgba(75, 192, 192, 0.6)',
+              'rgba(153, 102, 255, 0.6)',
+              'rgba(255, 159, 64, 0.6)'
+            ]
+          }]
+        },
+        options: {
+          responsive: false,
+          maintainAspectRatio: true,
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
     }
   });
-}
 
-
-  });
-
-  // 新規追加ボタン（forEach の外でOK）
+  // --- 新規追加ボタン ---
   if (isSignedIn) {
-    
     const addBtn = document.createElement("button");
     addBtn.textContent = "＋ 新規追加";
     addBtn.style.display = "block";
@@ -578,20 +693,19 @@ if (section.chart_data && Array.isArray(section.chart_data) && section.chart_dat
   }
 }
 
-async function deleteSection(id){
-  if(!confirm("本当に削除しますか？")) return;
+async function deleteSection(id) {
+  if (!confirm("本当に削除しますか？")) return;
 
   const { error } = await supabaseClient.from("info").delete().eq("id", id);
-  if(error){
+  if (error) {
     console.error("削除失敗:", error);
     alert("削除に失敗しました");
     return;
   }
 
   alert("削除しました");
-  loadInfoSections(); // 再描画
+  loadInfoSections();
 }
-
 
 // --- 編集モーダル ---
 function openEditor(sectionId = null) {
@@ -848,10 +962,15 @@ function onSignOut() {
 const infoId = 1;
 
 // --- 表示 ---
-function renderVisitorCount(count) {
-  const secElem = document.getElementById(`infoContent-${infoId}`);
-  if (!secElem) return;
-  secElem.textContent = `閲覧者数: ${count}`;
+function renderVisitorCount(count, infoId) {
+  const safeCount = (count !== undefined && count !== null) ? count : 0;
+  const interval = setInterval(() => {
+    const secElem = document.getElementById(`visitorCount-${infoId}`);
+    if (secElem) {
+      secElem.textContent = `閲覧者数: ${safeCount}`;
+      clearInterval(interval); // 1回表示したら終了
+    }
+  }, 100);
 }
 
 // --- カウント ---
@@ -862,7 +981,6 @@ async function countVisitor() {
     return;
   }
 
-  // 現在の visitors を取得
   const { data, error } = await supabaseClient
     .from('info')
     .select('visiters')
@@ -873,7 +991,6 @@ async function countVisitor() {
 
   const newCount = (data.visiters || 0) + 1;
 
-  // 更新
   const { error: updateErr } = await supabaseClient
     .from('info')
     .update({ visiters: newCount })
@@ -881,27 +998,53 @@ async function countVisitor() {
 
   if (updateErr) { console.error(updateErr); return; }
 
-  localStorage.setItem(storageKey, 'true'); // ここで1回フラグ
-  renderVisitorCount(newCount);
+  localStorage.setItem(storageKey, 'true');
+  renderVisitorCount(newCount, infoId);
 }
 
 // --- 初期表示 ---
 window.addEventListener('DOMContentLoaded', async () => {
+  // <div id="toukei"> を取得
+  const toukeiDiv = document.getElementById("toukei");
+
+  // サインイン状態なら表示
+  if (typeof isSignedIn !== 'undefined' && isSignedIn) {
+    toukeiDiv.style.display = "block";
+  }
+
+  // 現在の visiters を取得して表示
   const { data, error } = await supabaseClient
     .from('info')
     .select('visiters')
     .eq('id', infoId)
     .single();
 
-  if (error) { console.error(error); renderVisitorCount(0); }
-  else renderVisitorCount(data.visiters || 0);
-if (isSignedIn){
-  isSignedIn=true
-      toukei.style.display = "block";
-}
+  if (error) { 
+    console.error(error); 
+    renderVisitorCount(0, infoId);
+  } else {
+    renderVisitorCount(data.visiters || 0, infoId);
+  }
+
   // カウント処理
   countVisitor();
 });
+function startHeroSlideshow() {
+  const wrapper = document.querySelector(".hero .slides-wrapper");
+  const slides = wrapper.children;
+  const slideCount = slides.length;
+  let index = 0;
+
+  setInterval(() => {
+    index = (index + 1) % slideCount;
+    wrapper.style.transform = `translateX(-${100 * index}%)`;
+  }, 2000);
+}
+
+window.addEventListener("DOMContentLoaded", startHeroSlideshow);
+
+
+
 
 
 </script>
