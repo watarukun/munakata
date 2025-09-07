@@ -499,28 +499,185 @@ document.addEventListener("DOMContentLoaded", () => {
 <p> 編集者へ、バグとか動かないとかあったら伝えて</p>
 <p>ふざけた内容の追加は許しません。変更内容は即座に反映されます</p>
 </div>
+<br>
+<hr style="border: 1px solid #2c2c2c;">
 
 <div id="toukei" style="text-align: center; display: none;">
 <section>
   <h2 style="color: #929292;">閲覧者数統計</h2>
   <p id="visitorCount-1"></p> <!-- 閲覧者数専用ID -->
 </section>
+<hr style="border: 1px solid #262626;">
 <section>
    <h2 style="color: rgb(255, 255, 255);">作業用BGM</h2>
 <audio id="myAudio" src="yeeeeeeee.mp3" preload="auto"></audio>
 <button onclick="playAudio()" style="background-color: #ffffff; border-radius: 5px;">再生</button>
 <button onclick="pauseAudio()" style="background-color: rgb(110, 110, 110); border-radius: 5px;">停止</button>
 </section>
+<hr style="border: 1px solid #212121;">
 <section>
   <h2>画像の追加について</h2>
   <p>技術的に不可能でした　諦めてください</p>
-<p>どうしても追加したい場合はHTMLに直接埋め込みます</p>
+<p>どうしても追加したい場合は原始的にHTMLに直接埋め込みます</p>
 </section>
 <script>
   const audio = document.getElementById('myAudio');
   function playAudio() { audio.play(); }
   function pauseAudio() { audio.pause(); }
 </script>
+<hr style="border: 1px solid #212121;">
+<section>
+  <h2 style="color: rgb(215, 181, 157);">癒し</h2>
+<div class="youtube-video-wrapper">
+  <video id="myVideo" src="guff.mp4"></video>
+  <div class="controls">
+    <button id="playBtn">▶</button>
+    <span id="currentTime">0:00</span>
+    <input type="range" id="progress" value="0" min="0" max="100">
+    <span id="duration">0:00</span>
+    <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
+  </div>
+</div>
+
+<style>
+.youtube-video-wrapper {
+  max-width: 800px;
+  margin: 20px auto;
+  background: #000;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+
+/* 動画本体 */
+.youtube-video-wrapper video {
+  width: 100%;
+  display: block;
+}
+
+/* コントロールバー */
+.youtube-video-wrapper .controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* hoverで表示 */
+.youtube-video-wrapper:hover .controls {
+  opacity: 1;
+}
+
+/* ボタン */
+.youtube-video-wrapper .controls button {
+  border: none;
+  background: none;
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+.youtube-video-wrapper .controls input[type="range"]#progress {
+  flex: 1;           /* ← これで横いっぱいに広がる */
+  margin: 0 5px;     /* ボタンと時間表示との間隔 */
+}
+
+
+/* プログレスバー */
+.youtube-video-wrapper .controls input[type="range"] {
+  cursor: pointer;
+  -webkit-appearance: none;
+  height: 5px;
+  background: #555;
+  border-radius: 2px;
+  transition: all 0.2s;
+}
+
+/* プログレスバーつまみ */
+#progress::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+#progress::-webkit-slider-thumb:hover {
+  transform: scale(1.3);
+}
+
+/* 音量バー */
+#volume {
+  width: 80px;
+}
+
+/* 時間表示 */
+.youtube-video-wrapper .controls span {
+  color: #fff;
+  font-size: 0.85rem;
+  width: 40px;
+  text-align: center;
+}
+</style>
+
+<script>
+const video = document.getElementById('myVideo');
+const playBtn = document.getElementById('playBtn');
+const progress = document.getElementById('progress');
+const currentTime = document.getElementById('currentTime');
+const duration = document.getElementById('duration');
+const volume = document.getElementById('volume');
+
+function formatTime(sec){
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${s.toString().padStart(2,'0')}`;
+}
+
+// 再生・停止
+playBtn.addEventListener('click', () => {
+  if(video.paused) video.play();
+  else video.pause();
+});
+
+// 動画の進捗と時間表示
+video.addEventListener('timeupdate', () => {
+  if(video.duration) progress.value = (video.currentTime / video.duration) * 100;
+  currentTime.textContent = formatTime(video.currentTime);
+});
+
+// 総時間
+video.addEventListener('loadedmetadata', () => {
+  duration.textContent = formatTime(video.duration);
+});
+
+// バー操作で動画位置変更
+progress.addEventListener('input', () => {
+  video.currentTime = (progress.value / 100) * video.duration;
+});
+
+// 音量操作
+volume.addEventListener('input', () => {
+  video.volume = volume.value;
+});
+
+// 再生状態でボタン表示切替
+video.addEventListener('play', () => playBtn.textContent = '⏸');
+video.addEventListener('pause', () => playBtn.textContent = '▶');
+</script>
+
+
+
+
+</section>
 </div>
 
 <!-- サインイン時メッセージ -->
