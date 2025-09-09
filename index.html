@@ -115,19 +115,106 @@
   @keyframes fadeIn{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}
   @keyframes slideUp{to{opacity:1;transform:translateY(0);}}
   /* サインインボタン */
-  #signinTrigger{position:fixed;top:15px;right:15px;background:rgba(255,255,255,0.1);color:#f7f7f7;padding:0.4rem 0.8rem;border-radius:8px;font-size:0.9rem;cursor:pointer;transition:all 0.3s;border:1px solid rgba(255,255,255,0.2);z-index:1000;}
-  #signinTrigger:hover{background:rgba(0,255,224,0.2);color:#fff;}
+  #signinTrigger{background:rgba(49, 49, 49, 0.1);color:#a5a5a5;padding:0.4rem 0.8rem;border-radius:1px;font-size:0.9rem;cursor:pointer;transition:all 0.3s;border:1px solid rgba(255, 255, 255, 0);z-index:1000;}
+  #signinTrigger:hover{background:rgba(255, 255, 255, 0.2);color:#fff;}
   /* 編集ボタン */
-  #editBtn{display:none;position:fixed;bottom:20px;right:20px;background:#fafafa;color:#000;padding:0.8rem 1rem;border-radius:50%;cursor:pointer;font-weight:bold;z-index:1000;box-shadow:0 0 15px rgba(0,255,224,0.6);}
+  #editBtn{display:none;position:fixed;bottom:20px;right:20px;background:#fafafa;color:#000;padding:0.8rem 1rem;border-radius:50%;cursor:pointer;font-weight:bold;z-index:1000;}
   /* モーダル */
   .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:2000;transition:opacity 0.3s ease;}
   .modal.show{display:flex;}
-  #loginBox,#editBox{background:#1c1c1c;padding:2rem;border-radius:12px;box-shadow:0 0 20px rgba(0,255,224,0.3);text-align:center;width:300px;}
-  #loginBox h2,#editBox h2{color:#f6f6f6;margin-bottom:1rem;}
-  #loginBox input,#editBox textarea{width:100%;padding:0.5rem;margin:0.5rem 0;border:none;border-radius:8px;background:rgba(255,255,255,0.1);color:white;}
-  #loginBox button,#editBox button{background:#ffffff;color:#000;padding:0.5rem 1rem;border:none;border-radius:8px;cursor:pointer;margin-top:1rem;width:100%;}
-  #editBox textarea{height:150px;margin-bottom:1rem;}
-  #editBox button{width:48%;margin:0.5%;}
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+/* モーダル表示時 */
+.modal.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ボックス本体 */
+#loginBox {
+  background: #1c1c1c;
+  padding: 2rem;
+  border-radius: 3px;
+
+  text-align: center;
+  width: 300px;
+  transform: scale(0.8);
+  opacity: 0;
+  animation: popIn 0.4s ease forwards;
+}
+
+/* 見出し */
+#loginBox h2 {
+  color: #f6f6f6;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* 入力欄 */
+#loginBox input {
+  width: 100%;
+  padding: 0.6rem;
+  margin: 0.5rem 0;
+  border: none;
+  border-radius: 0px;
+  background: rgba(255,255,255,0.08);
+  color: white;
+  font-size: 0.9rem;
+  transition: 0.3s;
+}
+
+#loginBox input:focus {
+  outline: none;
+  background: rgba(234, 234, 234, 0.15);
+
+}
+
+/* ボタン */
+#loginBox button {
+  background: linear-gradient(90deg, #ffffff, #ffffff);
+  color: #000;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 1px;
+  cursor: pointer;
+  margin-top: 1rem;
+  width: 106%;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+#loginBox button:hover {
+  background: linear-gradient(90deg, #c6c6c6, #ffffff);
+
+  transform: translateY(-2px);
+}
+
+/* アニメーション */
+@keyframes popIn {
+  from {
+    transform: scale(0.8) translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
 
   @media(max-width:768px){.hero h1{font-size:2em;}}
   #editBtn {
@@ -172,8 +259,7 @@
   opacity: 1;
   pointer-events: all; /* 表示時にクリック有効 */
 }
-#openAdminBtn{position:fixed;top:6px;right:160px;background:rgba(255,255,255,0.1);color:#f7f7f7;padding:0.4rem 0.8rem;border-radius:8px;font-size:0.9rem;cursor:pointer;transition:all 0.3s;border:1px solid rgba(255,255,255,0.2);z-index:1000;}
-  #openAdminBtn:hover{background:rgba(0,255,224,0.2);color:#fff;}
+
   
 
 
@@ -409,7 +495,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <!-- 追加情報 -->
 
 <!-- サインインボタン -->
-<button id="signinTrigger">サインイン</button>
+
 
 <!-- 編集ボタン -->
 <button id="editBtn">✎</button>
@@ -426,19 +512,111 @@ document.addEventListener("DOMContentLoaded", () => {
   </div>
 </div>
 <!-- 管理者メモモーダル -->
-<div id="adminNoteModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-  background:#ffffff; padding:10px; border-radius:8px; box-shadow:0 0 15px rgba(0,0,0,0.3); z-index:9999; width:80%; max-width:600px; flex-direction:column;">
-  <h3 style="color: #292929; text-align: center;">メモ</h3>
-   <h4 style="color: #1c1c1c; text-align: center;">このメモの内容は他の編集者と共有されます</h4>
-  <textarea id="adminNoteTextarea" style="width:auto; color: #3f6d29; height:400px; margin-top:10px; padding:5px; font-family:Consolas,monospace; font-size:14px;"></textarea>
-  <div style="margin-top:10px; text-align:right;">
-    <button onclick="closeAdminNote()" style="padding:5px 10px; background:#ffffff; border:none; border-radius:5px; cursor:pointer;">閉じる</button>
-    <button id="saveNoteBtn" style="padding:5px 10px; background:#ffffff; border:none; border-radius:5px; cursor:pointer;">保存</button>
+<!-- 管理者メモモーダル -->
+<div id="adminNoteModal" style="
+  display:none;
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  width:80%;
+  max-width:600px;
+  background: rgba(30,30,30,0.9);
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  backdrop-filter: blur(10px);
+  z-index: 9999;
+  flex-direction: column;
+  animation: fadeInModal 0.3s ease forwards;
+">
+
+  <h3 style="color:#ffffff; text-align:center; margin-bottom:8px; font-size:1.8em;">メモ</h3>
+  <h4 style="color:#cccccc; text-align:center; margin-bottom:15px; font-weight:400;">このメモの内容は他の編集者と共有されます</h4>
+  
+  <textarea id="adminNoteTextarea" style="
+    width:100%;
+    height:400px;
+    padding:10px;
+    border-radius:12px;
+    border:none;
+    background: rgba(255,255,255,0.05);
+    color: #ffffff;
+    font-family: Consolas, monospace;
+    font-size:14px;
+    resize: vertical;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+  "></textarea>
+
+  <div style="margin-top:15px; text-align:right;">
+    <button onclick="closeAdminNote()" style="
+      padding:8px 15px;
+      margin-right:8px;
+      border:none;
+      border-radius:10px;
+      background: #444;
+      color:#fff;
+      cursor:pointer;
+      transition: 0.3s;
+    " onmouseover="this.style.background='#666'" onmouseout="this.style.background='#444'">閉じる</button>
+
+    <button id="saveNoteBtn" style="
+      padding:8px 15px;
+      border:none;
+      border-radius:10px;
+      background: linear-gradient(90deg,#ffffff,#ffffff);
+      color:#0b0b0b;
+      cursor:pointer;
+      font-weight:bold;
+      transition: 0.3s;
+    " onmouseover="this.style.background='linear-gradient(90deg,)'" onmouseout="this.style.background='linear-gradient(90deg,)'">保存</button>
   </div>
 </div>
 
-<!-- 管理者メモを開くボタン（最初は非表示） -->
-<button id="openAdminBtn" style="display:none; margin:10px 0; padding:5px 10px;">メモを開く</button>
+
+<button id="opensubeditmodal" style="
+  display:none;
+  position:fixed;
+  bottom:120px;
+  right:20px;
+  padding:32px 10px;
+  border:none;
+  border-radius:50%;
+  background: linear-gradient(135deg,#2a9bc7);
+  color:#ffffff;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+  transition: 0.3s;
+  z-index: 99;
+  
+" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">新規作成＋</button>
+
+
+<!-- 管理者メモを開くボタン -->
+<button id="openAdminBtn" style="
+  display:none;
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  padding:32px 10px;
+  border:none;
+  border-radius:50%;
+  background: linear-gradient(135deg,#fffd84);
+  color:#373737;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+  transition: 0.3s;
+" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">管理者メモ</button>
+
+<style>
+@keyframes fadeInModal {
+  from { opacity:0; transform: translate(-50%, -45%); }
+  to { opacity:1; transform: translate(-50%, -50%); }
+}
+</style>
+
 
 
 <!-- 管理者メモを開くボタン -->
@@ -461,6 +639,8 @@ document.addEventListener("DOMContentLoaded", () => {
  
   </div>
 </div>
+
+
 <!-- ======= 円グラフ付き情報追加・編集モーダル ======= -->
 <!-- 円グラフ付き情報追加・編集モーダル -->
 <div id="editorModal" style="
@@ -471,8 +651,8 @@ document.addEventListener("DOMContentLoaded", () => {
     transform:translate(-50%,-50%);
     background:#262626;   /* ← ここを変更 */
     padding:20px;
-    border-radius:10px;
-    box-shadow:0 0 10px rgb(247, 247, 247);
+    border-radius:3px;
+border: 4px solid #2c2c2c;
     z-index:9999;
     max-width:400px;
     width:90%;
@@ -486,7 +666,7 @@ document.addEventListener("DOMContentLoaded", () => {
   <button type="button" onclick="addChartInputRow(document.getElementById('chartInputs'))" style="margin-top:5px;">＋ グラフデータ追加</button>
 
   <div style="margin-top:15px; text-align:right;">
-    <button onclick="saveSection()" style="padding:5px 10px; background:#00ffe0; border:none; border-radius:5px; cursor:pointer;">保存</button>
+    <button onclick="saveSection()" style="padding:5px 10px; background:#ffdf77; border:none; border-radius:1px; cursor:pointer;">保存</button>
     <button onclick="closeEditor()" style="padding:5px 10px; margin-left:10px;">キャンセル</button>
   </div>
 </div>
@@ -528,7 +708,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <hr style="border: 1px solid #212121;">
 <section>
   <h2 style="color: rgb(215, 181, 157);">癒し</h2>
-<div class="youtube-video-wrapper">
+<div id="myVideoWrapper" class="youtube-video-wrapper" style="display:none;">
   <video id="myVideo" src="guff.mp4"></video>
   <div class="controls">
     <button id="playBtn">▶</button>
@@ -539,22 +719,30 @@ document.addEventListener("DOMContentLoaded", () => {
   </div>
 </div>
 
+<button style="background-color: #ffffff; border-radius: 5px;" id="guff">癒される</button>
+
+
 <style>
 .youtube-video-wrapper {
-  max-width: 800px;
+  max-width: 600px; /* 最大幅を変更 */
+  width: 90%;        /* ページ幅に対する割合 */
+  height: auto;      /* 高さは自動調整（縦横比維持） */
   margin: 20px auto;
   background: #000;
-  border-radius: 4px;
+  border-radius: 6px;
   overflow: hidden;
   position: relative;
+ display: none;
   cursor: pointer;
 }
 
 /* 動画本体 */
 .youtube-video-wrapper video {
   width: 100%;
+  height: auto; /* ここで縦横比を維持 */
   display: block;
 }
+
 
 /* コントロールバー */
 .youtube-video-wrapper .controls {
@@ -593,7 +781,7 @@ document.addEventListener("DOMContentLoaded", () => {
 /* プログレスバー */
 .youtube-video-wrapper .controls input[type="range"] {
   cursor: pointer;
-  -webkit-appearance: none;
+  appearance: none;
   height: 5px;
   background: #555;
   border-radius: 2px;
@@ -627,63 +815,74 @@ document.addEventListener("DOMContentLoaded", () => {
   text-align: center;
 }
 </style>
-
 <script>
-const video = document.getElementById('myVideo');
-const playBtn = document.getElementById('playBtn');
-const progress = document.getElementById('progress');
-const currentTime = document.getElementById('currentTime');
-const duration = document.getElementById('duration');
-const volume = document.getElementById('volume');
+document.addEventListener('DOMContentLoaded', () => {
+  // 動画表示ボタン
+  const guffBtn = document.getElementById('guff');
+const myVideoWrapper = document.getElementById('myVideoWrapper');
 
-function formatTime(sec){
-  const m = Math.floor(sec / 60);
-  const s = Math.floor(sec % 60);
-  return `${m}:${s.toString().padStart(2,'0')}`;
-}
 
-// 再生・停止
-playBtn.addEventListener('click', () => {
-  if(video.paused) video.play();
-  else video.pause();
+guffBtn.addEventListener('click', () => {
+  myVideoWrapper.style.display = 'block';
+    guffBtn.style.display = 'none';
+  const video = document.getElementById('myVideo');
+ 
 });
 
-// 動画の進捗と時間表示
-video.addEventListener('timeupdate', () => {
-  if(video.duration) progress.value = (video.currentTime / video.duration) * 100;
-  currentTime.textContent = formatTime(video.currentTime);
-});
 
-// 総時間
-video.addEventListener('loadedmetadata', () => {
-  duration.textContent = formatTime(video.duration);
-});
+  // 動画操作
+  const video = document.getElementById('myVideo');
+  const playBtn = document.getElementById('playBtn');
+  const progress = document.getElementById('progress');
+  const currentTime = document.getElementById('currentTime');
+  const duration = document.getElementById('duration');
+  const volume = document.getElementById('volume');
 
-// バー操作で動画位置変更
-progress.addEventListener('input', () => {
-  video.currentTime = (progress.value / 100) * video.duration;
-});
+  function formatTime(sec){
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return `${m}:${s.toString().padStart(2,'0')}`;
+  }
 
-// 音量操作
-volume.addEventListener('input', () => {
-  video.volume = volume.value;
-});
+  // 再生・停止
+  playBtn.addEventListener('click', () => {
+    if(video.paused) video.play();
+    else video.pause();
+  });
 
-// 再生状態でボタン表示切替
-video.addEventListener('play', () => playBtn.textContent = '⏸');
-video.addEventListener('pause', () => playBtn.textContent = '▶');
+  // 動画の進捗と時間表示
+  video.addEventListener('timeupdate', () => {
+    if(video.duration) progress.value = (video.currentTime / video.duration) * 100;
+    currentTime.textContent = formatTime(video.currentTime);
+  });
+
+  // 総時間
+  video.addEventListener('loadedmetadata', () => {
+    duration.textContent = formatTime(video.duration);
+  });
+
+  // バー操作で動画位置変更
+  progress.addEventListener('input', () => {
+    video.currentTime = (progress.value / 100) * video.duration;
+  });
+
+  // 音量操作
+  volume.addEventListener('input', () => {
+    video.volume = volume.value;
+  });
+
+  // 再生状態でボタン表示切替
+  video.addEventListener('play', () => playBtn.textContent = 'ガフを止める');
+  video.addEventListener('pause', () => playBtn.textContent = 'ガフを躍らす');
+});
 </script>
 
-
-
-
-</section>
 </div>
 
 <!-- サインイン時メッセージ -->
 
 <footer>
-    <p>© 2024~2025 セゾン・ド・宗像  　 Web page Created by watatawa Software</p>
+    <p>© 2024~2025 セゾン・ド・宗像  　 Web page Created by watatawa Software　　　　　　<button id="signinTrigger">編集者サインイン</button></p>
 </footer>
 
 <script>
@@ -696,6 +895,7 @@ const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 const infoSections = document.getElementById("infoSections");
 const loginModal = document.getElementById("loginModal");
 const editModal = document.getElementById("editModal");
+const opensubeditmodal = document.getElementById("opensubeditmodal");
 let editingId = null;
 let infoData = [];
 
@@ -717,6 +917,7 @@ const signedInMessage = document.getElementById("signedInMessage");
     renderSections(true);
     editBtn.style.display = "block";
      toukei.style.display = "block";
+      opensubeditmodal.style.display = "block";
     signinTrigger.textContent = "サインアウト";
         openAdminBtn.style.display ='block';
       signedInMessage.style.display = "block";
@@ -835,20 +1036,39 @@ function renderSections(isSignedIn = false) {
   });
 
   // --- 新規追加ボタン ---
-  if (isSignedIn) {
-    const addBtn = document.createElement("button");
-    addBtn.textContent = "＋ 新規追加";
-    addBtn.style.display = "block";
-    addBtn.style.margin = "30px auto";
-    addBtn.style.padding = "0.5rem 1rem";
-    addBtn.style.background = "#00ffe0";
-    addBtn.style.color = "#000";
-    addBtn.style.borderRadius = "8px";
-    addBtn.style.cursor = "pointer";
-    addBtn.addEventListener("click", () => openEditor(null));
-    infoSections.appendChild(addBtn);
+// --- renderSections 内の isSignedIn チェック部分に置くコード ---
+if (isSignedIn) {
+  // 既存の「＋ 新規追加」ボタン（動的生成）
+  const addBtn = document.createElement("button");
+  addBtn.textContent = "＋ 新規追加";
+  addBtn.style.display = "block";
+  addBtn.style.margin = "30px auto";
+  addBtn.style.padding = "0.5rem 1rem";
+  addBtn.style.background = "#00ffe0";
+  addBtn.style.color = "#000";
+  addBtn.style.borderRadius = "8px";
+  addBtn.style.cursor = "pointer";
+  addBtn.addEventListener("click", () => openEditor(null));
+  infoSections.appendChild(addBtn);
+
+  // HTML に既にある opensubeditmodal ボタンを取得して安全に使う
+  const opensubeditmodalBtn = document.getElementById("opensubeditmodal");
+  if (opensubeditmodalBtn) {
+    // 二重バインド防止フラグをチェックしてからイベント登録
+    if (!opensubeditmodalBtn.dataset.bound) {
+      opensubeditmodalBtn.addEventListener("click", () => openEditor(null));
+      opensubeditmodalBtn.dataset.bound = "1";
+    }
+    // サインイン時のみ表示（サインアウト時は別で非表示に戻してください）
+    opensubeditmodalBtn.style.display = "block";
   }
+} else {
+  // サインアウト時は既存ボタンを非表示に
+  const opensubeditmodalBtn = document.getElementById("opensubeditmodal");
+  if (opensubeditmodalBtn) opensubeditmodalBtn.style.display = "none";
 }
+}
+
 
 async function deleteSection(id) {
   if (!confirm("本当に削除しますか？")) return;
@@ -939,6 +1159,7 @@ window.addEventListener("DOMContentLoaded", () => {
     editBtn.style.display = "block";
     signinTrigger.textContent = "サインアウト";
     signedInMessage.style.display = "block";
+        opensubeditmodal.style.display = "block";
 
   }
   loadInfoSections();
@@ -953,6 +1174,7 @@ signinTrigger.addEventListener("click", () => {
     openAdminBtn.style.display ='none';
     editBtn.style.display = "none";
         toukei.style.display = "none";
+             opensubeditmodal.style.display = "none";
     renderSections(false);
     alert("サインアウトしました");
     signedInMessage.style.display = "none";
@@ -1039,6 +1261,7 @@ const adminNoteTextarea = document.getElementById('adminNoteTextarea');
 const saveNoteBtn = document.getElementById('saveNoteBtn');
 const openAdminBtn = document.getElementById('openAdminBtn');
 
+
 // ボタン表示をサインイン状態で切り替え
 function updateAdminButton(isSignedIn) {
   openAdminBtn.style.display = isSignedIn ? "block" : "none";
@@ -1107,6 +1330,7 @@ function onSignOut() {
   localStorage.removeItem("isSignedIn");
   updateAdminButton(isSignedIn);
   adminNoteModal.style.display = 'none'; // モーダルが開いていた場合は閉じる
+       opensubeditmodal.style.display = "none";
 }
 
 
@@ -1199,6 +1423,8 @@ function startHeroSlideshow() {
 }
 
 window.addEventListener("DOMContentLoaded", startHeroSlideshow);
+
+
 
 
 
