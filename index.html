@@ -351,8 +351,9 @@
 
 
 </style>
+<meta name="google-site-verification" content="KF17qFwRNcEj2tfKYufQh5Bgd7MUD-IQtAgIT2nkIP0" />
 </head>
-
+<meta name="google-site-verification" content="KF17qFwRNcEj2tfKYufQh5Bgd7MUD-IQtAgIT2nkIP0" />
 <body>
 <!-- Hero -->
 <div class="hero">
@@ -687,6 +688,96 @@ border: 4px solid #2c2c2c;
   <h2 style="color: #929292;">閲覧者数統計</h2>
   <p id="visitorCount-1"></p> <!-- 閲覧者数専用ID -->
 </section>
+<hr style="border: 1px solid #262626;">
+<section>
+<body>
+    <h2 style="color: #929292;">オンライン者数</h2>
+    <p style="color: #a7a7a7;">クライアントごとにランダムなIDが割り当てられます</p>
+  <div id="online-count"></div> <!-- オンライン人数表示用 -->
+  <ul id="online-user-list"></ul> <!-- オンラインユーザー一覧 -->
+</body>
+
+  <ul id="onlineUserList"></ul>
+  <script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const supabase = createClient(
+  "https://zaebyzcghulsofisuqsv.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InphZWJ5emNnaHVsc29maXN1cXN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY5OTc0OTIsImV4cCI6MjA3MjU3MzQ5Mn0.etTWvg6ngetIO56zYRw00AaP2Y8vvpYG7kkqpEyOt2s"
+);
+
+// セッションID
+let sessionId = localStorage.getItem("sessionId");
+if (!sessionId) {
+  sessionId = "user_" + Math.random().toString(36).substring(2, 10);
+  localStorage.setItem("sessionId", sessionId);
+}
+
+const onlineCountEl = document.getElementById("online-count");
+const onlineUserList = document.getElementById("online-user-list");
+
+// ハートビート間隔とタイムアウト
+const HEARTBEAT = 3000; // 3秒
+const TIMEOUT = 10000;  // 10秒
+
+// 初回参加
+async function joinPresence() {
+  const now = new Date().toISOString();
+  await supabase.from("online_users").upsert(
+    [{ user_id: sessionId, last_active: now }],
+    { onConflict: ["user_id"] }
+  );
+}
+joinPresence();
+
+// ハートビートで last_active 更新
+setInterval(async () => {
+  const now = new Date().toISOString();
+  await supabase.from("online_users")
+    .update({ last_active: now })
+    .eq("user_id", sessionId);
+}, HEARTBEAT);
+
+// タブ閉じ・ページ離脱で削除
+window.addEventListener("beforeunload", async () => {
+  await supabase.from("online_users")
+    .delete()
+    .eq("user_id", sessionId);
+});
+
+// オンラインユーザー取得・表示
+async function fetchOnlineUsers() {
+  const cutoff = new Date(Date.now() - TIMEOUT).toISOString();
+  const { data, error } = await supabase.from("online_users")
+    .select("*")
+    .gte("last_active", cutoff);
+
+  if (error) {
+    console.error("Fetch online users error:", error);
+    return;
+  }
+
+  onlineCountEl.textContent = `オンライン人数: ${data.length}`;
+  onlineUserList.innerHTML = data.map(u => `<li>${u.user_id}</li>`).join("");
+
+  // 古いレコードの自動削除
+  await supabase.from("online_users")
+    .delete()
+    .lt("last_active", cutoff);
+}
+
+// 3秒ごとに更新
+setInterval(fetchOnlineUsers, HEARTBEAT);
+fetchOnlineUsers();
+
+// Realtime購読でほぼ即時反映
+supabase.channel("online_users_changes")
+  .on("postgres_changes", { event: "*", schema: "public", table: "online_users" }, fetchOnlineUsers)
+  .subscribe();
+</script>
+
+</section>
+
 <hr style="border: 1px solid #262626;">
 <section>
    <h2 style="color: rgb(255, 255, 255);">作業用BGM</h2>
