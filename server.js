@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 3000;
 
 // index.html をルート直下で返す
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+  res.sendFile(path.join(__dirname, "husyozi.html"));
 });
 
 // 静的ファイルをルート直下から配信
